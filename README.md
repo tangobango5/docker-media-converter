@@ -1,44 +1,43 @@
-# media-converter
+stream optional
+input_file required // optional or relative to $stream
+output_file required // optional or relative to $stream
+options optional
 
-[![Build Status](https://img.shields.io/travis/marvinpinto/docker-media-converter/master.svg?style=flat-square)](https://travis-ci.org/marvinpinto/docker-media-converter)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
-[![Quay.io](https://quay.io/repository/marvin/media-converter/status)](https://quay.io/repository/marvin/media-converter)
+Run:
 
-A docker container to convert your `mkv` files to an `mp4` format which Plex is
-capable of direct streaming.
+stream="/Users/riteshkumarchaurasia/Movies/Stream" \
+INPUT_FILE="John Wick/Chapter2-Dual-Audio-2017.mkv" \
+OUTPUT_FILE="John Wick/Chapter2-Dual-Audio-2017.mp4" \
+  bash build_and_run.sh
 
-### How does it work?
 
-It searches through a specified list of directories for all files ending with
-`*.mkv` and then uses the `avconv` tool to convert these files to the `mp4`
-format.
+IF you want to inspect:
+stream="/Users/riteshkumarchaurasia/Movies/Stream" \
+INPUT_FILE=/Users/riteshkumarchaurasia/Movies/Stream/John\ Wick/Chapter3-Dual-Audio-2019.mkv \
+OUTPUT_FILE=/Users/riteshkumarchaurasia/Movies/Stream/John\ Wick/Chapter3-Dual-Audio-2019.mp4 \
+INSPECT="true" \
+  bash build_and_run.sh
 
-### How do I use this?
 
-You should be able to run the docker container using something along the lines
-of:
+If subtitle tag error run:
+stream="/Users/riteshkumarchaurasia/Movies/Stream" \
+INPUT_FILE=/Users/riteshkumarchaurasia/Movies/Stream/John\ Wick/Chapter3-Dual-Audio-2019.mkv \
+OUTPUT_FILE=/Users/riteshkumarchaurasia/Movies/Stream/John\ Wick/Chapter3-Dual-Audio-2019.mp4 \
+OPTIONS="-c:v copy -c:a copy -c:s:0 mov_text -map 0:a:0 -map 0:v:0 -map 0:a:1 -map 0:s:2" \
+  bash build_and_run.sh
 
-```bash
-docker run -d \
-  -e "MEDIA_TVSHOWS=/tv" \
-  -e "MEDIA_MOVIES=/movies" \
-  -e "PLEX_URL=http://127.0.0.1:32400" \
-  -e "PLEX_TOKEN=sekr3t" \
-  -v "/opt/data/tv:/tv" \
-  -v "/opt/data/movies:/movies" \
-  quay.io/marvin/media-converter
-```
+If inspect result is:
+0:0 audio
+0:1 video
+0:2 audio
+0:3 sub dvd
+0:4 sub ind
+0:5 sub eng
 
-Few things to keep in mind here:
+-c:v copy -c:a copy -c:s:0 mov_text -map 0:a:0 -map 0:v:0 -map 0:a:1 -map 0:s:2
+This would mean:
+-map 0:s:2 - select 0 input 3rd subtitle stream i.e. "0:5 sub eng"
+-map 0:v:0 - select 0 input 1st video steam i.e. "0:1 video"
+-c:v copy - copy all streams selected in map
+-c:s:0 mov_text - select 1st subtitle stream which actually is (0:5 sub eng) because of (-map 0:s:2) and convert to mov_text
 
-- `MEDIA_xxx` environment variables: These variables should point to the
-mounted _media_ directories. Supply as many you need. The [entrypoint.sh][1]
-script will handle iterating over each of those directories and converting
-those `mkv` files as needed.
-
-- `PLEX_URL`: If you supply a plex URL, the [entrypoint.sh][1] script will take
-care of triggering a media refresh after each cycle. Note that you will also
-need a `PLEX_TOKEN` variable here (see [Finding your account token][2]).
-
-[1]: entrypoint.sh
-[2]: https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token

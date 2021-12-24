@@ -1,16 +1,14 @@
-FROM ubuntu:14.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /
 
 RUN apt-get -qq update \
   && apt-get install -y \
-    libav-tools \
+    ffmpeg \
     curl \
   && apt-get clean autoclean \
-  && apt-get autoremove -y --purge \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-  && rm -rf /var/lib/{apt,dpkg,cache,log}/
+  && apt-get autoremove -y --purge
 
 ADD entrypoint.sh .
 CMD ["/entrypoint.sh"]
