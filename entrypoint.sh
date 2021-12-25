@@ -18,7 +18,7 @@ else
   echo "Using default options: $OPTIONS"
 fi
 
-rm -rf $OUTPUT_FILE
+rm -rf "$OUTPUT_FILE"
 touch "$OUTPUT_FILE"
 
 if [[ $INSPECT ]];
