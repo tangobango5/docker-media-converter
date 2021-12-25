@@ -3,7 +3,7 @@
 - INPUT_FILE - Absolute path of the file inside container or relative to $stream
 - OUTPUT_FILE - Absolute path of the file inside container or relative to $stream
 - OPTIONS - Any options you want to give to ffmpeg
-- INSPECT - Whether you want to just inspect any file
+- INSPECT - Whether you only want to inspect the file
 <br />
 
 #### Examples
