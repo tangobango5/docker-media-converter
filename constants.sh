@@ -1,6 +1,6 @@
 #! /bin/bash
 
-export version=1.0
+export version=2.0
 export tag=v$version
 export user=tangobango
 export image=$user/media-converter
